@@ -3,6 +3,7 @@
 # Author: cncartist
 # Description: Turn your phone into your GPS for the Pager with minimal effort!  Allows stop/start of UDP Port 9999 NMEA GPS data collection for the Pager.  Can use Android app gpsdRelay, iPhone NMEA Send Location App, C5 Wardriver, or similar GPS relaying apps/devices to relay NMEA information to the gpsd server UDP Port 9999 on the Pagers Management AP.  This allows NMEA information to be passed to the device from any NMEA source on the Pagers Mgmt AP sending UDP NMEA data to UDP Port 9999.  It can take some time until data starts being received, and that relies on the phone/sending devices GPS signal.
 # Category: general
+# Version: 1.1
 # 
 # ============================================
 # Acknowledgements: 
@@ -18,6 +19,11 @@
 # ORIG FW 1.0.9 = option device '/dev/serial/by-path/1.1_1-1.1:1.0'
 # Check output of active GPS data with count of 10 new messages: "gpspipe -r -n 10"
 # -- -- Output will be flowing when GPS is coming through
+# 
+# ============================================
+# Updates:
+# ============================================
+# v1.1 - Change core device from 0.0.0.0 (not working on 1.1.0) to 172.16.52.1
 # 
 
 backupFile="savedGPSdevice.txt"
@@ -47,7 +53,7 @@ if [[ "$resp" == "$DUCKYSCRIPT_USER_CONFIRMED" ]] ; then
 	fi
 	# LOG "orig_gpsdevicepath: $orig_gpsdevicepath"
 	printf "%s" "${orig_gpsdevicepath}" > "$backupFile"
-	uci set gpsd.core.device='udp://0.0.0.0:9999'
+	uci set gpsd.core.device='udp://172.16.52.1:9999'
 	uci commit 2>/dev/null
 	sleep 1
 	LOG "Applying Settings..."
