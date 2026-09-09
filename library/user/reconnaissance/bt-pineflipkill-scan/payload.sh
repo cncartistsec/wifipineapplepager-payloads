@@ -3,7 +3,7 @@
 # Author: cncartist
 # Description: WiFi Pineapple BT / Flipper Zero / USB Kill BT Scanner.  Allows scanning with external USB Bluetooth adapter and GPS coordinate logging.
 # Category: reconnaissance
-# Version: 1.0
+# Version: 1.1
 # 
 # Acknowledgements: 
 # Find Hackers - Author: NULLFaceNoCase - (idea and concept for searching BT devices)
@@ -36,11 +36,6 @@ declare -A BT_USBKILLS
 declare -A BT_PINEAPPS
 declare -A BT_NAMES
 declare -A BT_COMPS
-
-# BT
-# USBKiller F1:9E:08
-# Wifi Pineapple Pager 00:13:37
-# (VirtualBox) 08:00:27
 
 cleanup() {
     killall hcitool 2>/dev/null
@@ -210,7 +205,8 @@ flipper_search_bt() {
 	local FLIPPER_OUI="0C:FA:22"
 	local FLIPPER_NAME="flipper"
 	local FLIPPER_NAME2="badusb"
-	local USBKILL_OUI="F1:9E:08"
+	
+	# local USBKILL_OUI="xx:xx:xx"
 	local USBKILL_NAME="usbkill"
 	
 	local PINEAPP_OUI="00:13:37"
@@ -239,14 +235,14 @@ flipper_search_bt() {
 			BT_FLIPPERS[$mac]="$name"
 			# LOG "FLIPPER found!"
 		fi
-		if [[ "$target_oui" == "$USBKILL_OUI" ]] || [[ "$name" == *"$USBKILL_NAME"* ]] ; then
-			# Add hits, devices that include string "usbkill" in name or hardcoded OUI in MAC
+		if [[ "$name" == *"$USBKILL_NAME"* ]] ; then
+			# Add hits, devices that include string "usbkill" in name
 			BT_USBKILLS[$mac]="$name"
 			# LOG "USBKILL found!"
 		fi
     done < <(
         timeout --signal=SIGINT "${DATA_SCAN_SECONDS}s" hcitool -i "$BLE_IFACE" lescan |
-        grep -iE "^${FLIPPER_OUI}|${FLIPPER_NAME}|${FLIPPER_NAME2}|${USBKILL_OUI}|${USBKILL_NAME}|${PINEAPP_OUI}|${PINEAPP_NAME}|${PINEAPP_NAME2}|${PINEAPP_NAME3}" |
+        grep -iE "^${FLIPPER_OUI}|${FLIPPER_NAME}|${FLIPPER_NAME2}|${USBKILL_NAME}|${PINEAPP_OUI}|${PINEAPP_NAME}|${PINEAPP_NAME2}|${PINEAPP_NAME3}" |
         sort -u
     )
 	# Disable case-insensitive matching to restore default behavior
